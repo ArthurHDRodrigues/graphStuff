@@ -1,0 +1,19 @@
+undirected
+10
+edge 0,1
+edge 1,2
+edge 2,3
+edge 3,4
+edge 4,0
+
+edge 5,7
+edge 7,9
+edge 9,6
+edge 6,8
+edge 8,5
+
+edge 0,5
+edge 1,6
+edge 2,7
+edge 3,8
+edge 4,9
