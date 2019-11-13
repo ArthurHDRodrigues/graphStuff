@@ -1,5 +1,4 @@
 import numpy as np
-import pygame
 
 class vertex:
     def __init__(self, id = 0, pos = [100,100]):
@@ -117,19 +116,59 @@ class Graph:
 
         elif self.type == 'undirected' or self.type == 'mixed':
             for e in self.edgeSet:
-                matrixA[e.x.id][e.y.id] = 1
-                matrixA[e.y.id][e.x.id] = 1
+                matrixA[e.x.id][e.y.id] += 1
+                matrixA[e.y.id][e.x.id] += 1
         return matrixA
+    def genQ(self):
+        #gera a matriz de incidência VxE
+        n = len(self.vertexSet)
+        m = len(self.edgeSet)
+        Q = np.zeros([n,m], dtype=int)
+
+        for i in range(m):
+            Q[self.edgeSet[i].x.id][i] = 1
+            Q[self.edgeSet[i].y.id][i] = 1
+
+        return Q
+
+
+    def genD(self):
+        #gera a matriz diagonal com os grais dos vértices
+        n = len(self.vertexSet)
+        matrixD = np.zeros([n,n], dtype=int)
+
+        for e in self.edgeSet:
+            matrixD[e.x.id][e.x.id]+=1
+            matrixD[e.y.id][e.y.id]+=1
+
+        return matrixD
+
+    def genDedge(self):
+        #gera a matriz diagonal com os grais das arestas
+        m = len(self.edgeSet)
+        matrixD = np.zeros([m,m], dtype=int)
+
+        for i in range(m):
+            if(self.edgeSet[i].x.id == self.edgeSet[i].y.id):
+                matrixD[i][i] = 1
+            else:
+                matrixD[i][i] = 2
+            
+        return matrixD
+
 
 
     def genL(self):
         #L := D-A
-        L = -1*self.genA()
-        l = len(self.vertexSet)
-        for i in range(l):
-            L[i][i] = L[i].sum()*-1
+        D = self.genD()
+        A = self.genA()
 
-        return L
+        #L = -1*self.genA()
+        #l = len(self.vertexSet)
+        #for i in range(l):
+        #    L[i][i] = L[i].sum()*-1
+
+        return D-A
 
 
     def genM(self):
@@ -140,6 +179,10 @@ class Graph:
             s = M[i].sum()
             M[i] = M[i]/s
         return M
+
+    def genLoop(self):
+        D = self.genD()
+
 
     def genRep(self,n):
         #gera uma matriz de representação de G de n-ésima dimensão.
@@ -164,6 +207,16 @@ class Graph:
                 e.x.pos = [c[0][e.x.id],c[1][e.x.id]]
                 e.y.pos = [c[0][e.y.id],c[1][e.y.id]]
         return np.transpose(r)
+
+    def genNewL(self):
+        D = self.genD()
+        edgeD = np.linalg.inv(self.genDedge())
+        Q = self.genQ()
+
+        QD = Q.dot(edgeD)
+        QT = np.transpose(Q)
+        newL = D - QD.dot(QT)
+        return newL
 
     def union(self,other):
         '''

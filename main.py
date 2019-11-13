@@ -1,4 +1,4 @@
-import sys, pygame
+import sys
 
 from graphClasses import *
 from genGraphs  import *
@@ -54,24 +54,44 @@ def genGraph(formatedFile):
 
 def main():
     #print("lendo arquivo\n")
-    fileName = str(sys.argv[1])
+    #fileName = str(sys.argv[1])
 
-    formatedFile = formatFile(fileName)
+    #formatedFile = formatFile(fileName)
     #print("arquivo lido e formatado\ngerando grafo")
 
-    display = pygame.display.set_mode((1000,1000))
+    #display = pygame.display.set_mode((1000,1000))
 
     #result = genGraph(formatedFile)
-    result = genC(10)
+    result = genC(5)
 
-    #result = genP(3) #graph.union(genC(5)).union(genP(5))
-    #result.addEdge(edge(vertex(0),vertex(15)))
-    #result.addEdge(edge(vertex(5),vertex(12)))
+    result.addEdge(edge(vertex(0),vertex(0)))
+    result.addEdge(edge(vertex(0),vertex(3)))
 
     print("\n\n Grafo final:")
-    print(result.genRep(2))
-    #L = result.genL()
-    #print(L)
+    print(result)
+
+    print("\nLaplaciana:")
+    L = result.genL()
+    print(L)
+
+    s,v = np.linalg.eig(L)
+
+    print("Autovalores:")
+    print(s.round(decimals=3))
+    print("Autovetores:")
+    print(v.round(decimals=3))
+
+    print("\nProposta de Laplaciana:\n")
+    newL = result.genNewL()
+    print(newL)
+
+    s,v = np.linalg.eig(newL)
+
+    print("Autovalores:")
+    print(s.round(decimals=3))
+    print("Autovetores:")
+    print(v.round(decimals=3))
+
     #print("autovetores\n")
     #s,v = np.linalg.eig(L)
     #print(s[0].round(decimals=3))
@@ -97,9 +117,9 @@ def main():
     #print(genP(10))
     #print("\nCiclo C_n  com 10 vértices\n")
     #print(genC(10))
-    display.fill((255,255,255))
-    result.draw(display)
-    pygame.display.flip()
+    #display.fill((255,255,255))
+    #result.draw(display)
+    #pygame.display.flip()
     input("Sair?")
 
 if __name__ == "__main__":
